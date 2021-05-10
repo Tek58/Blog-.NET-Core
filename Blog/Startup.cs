@@ -1,4 +1,5 @@
 using Blog.Data;
+using Blog.Data.Repository;
 using Microsoft.EntityFrameworkCore.SqlServer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -27,6 +28,9 @@ namespace Blog
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<AppDbContext>(options => options.UseSqlServer(_config["DefaultConnection"]));
+
+            services.AddTransient<IRepository, Repository>();
+
             services.AddMvc(option => option.EnableEndpointRouting = false);
         }
 
