@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 namespace Blog
 {
@@ -29,6 +30,17 @@ namespace Blog
         {
             services.AddDbContext<AppDbContext>(options => options.UseSqlServer(_config["DefaultConnection"]));
 
+            services.AddDefaultIdentity<IdentityUser>(options =>
+            {
+                options.Password.RequireDigit = false;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequiredLength = 6;
+
+            })
+                .AddRoles<IdentityRole>()
+                .AddEntityFrameworkStores<AppDbContext>();
+
             services.AddTransient<IRepository, Repository>();
 
             services.AddMvc(option => option.EnableEndpointRouting = false);
@@ -41,6 +53,9 @@ namespace Blog
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseAuthentication();
+
             app.UseMvcWithDefaultRoute();
 
             /*app.UseRouting();
