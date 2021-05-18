@@ -30,7 +30,7 @@ namespace Blog
         {
             services.AddDbContext<AppDbContext>(options => options.UseSqlServer(_config["DefaultConnection"]));
 
-            services.AddDefaultIdentity<IdentityUser>(options =>
+            services.AddIdentity<IdentityUser, IdentityRole>(options =>
             {
                 options.Password.RequireDigit = false;
                 options.Password.RequireNonAlphanumeric = false;
@@ -38,9 +38,13 @@ namespace Blog
                 options.Password.RequiredLength = 6;
 
             })
-                .AddRoles<IdentityRole>()
+                //.AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<AppDbContext>();
 
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = "/Auth/Login";
+            });
             services.AddTransient<IRepository, Repository>();
 
             services.AddMvc(option => option.EnableEndpointRouting = false);
@@ -58,15 +62,6 @@ namespace Blog
 
             app.UseMvcWithDefaultRoute();
 
-            /*app.UseRouting();
-
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapGet("/", async context =>
-                {
-                    await context.Response.WriteAsync("Hello World!");
-                });
-            });*/
         }
     }
 }
